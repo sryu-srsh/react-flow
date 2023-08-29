@@ -1,0 +1,49 @@
+/* styles.css */
+.button-wrapper{
+    display: flex;
+}
+
+.button {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    color: #333333;
+    margin-right: 20px;
+    position: relative;
+    border-bottom: 2px solid transparent; 
+  }
+
+  .selected {
+    border-bottom: 3px solid purple;
+  }
+  
+  .color-box {
+    width: 15px;
+    height: 15px;
+    margin-left: 10px;
+    border-radius: 3px;
+    margin-right: 5px;
+  }
+
+  .node-data{
+    margin-top: 10px;
+  }
+
+  .graph{
+    max-width: 60%;
+  }
+
+  .sidebar{
+    border-left: 2px solid gray;
+    padding: 10px;
+    padding-left: 20px;
+    max-width: 40%;
+  }
+  
