@@ -1,49 +1,70 @@
 /* styles.css */
-.button-wrapper{
-    display: flex;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Your existing styles */
+
+/* .button-wrapper {
+  @apply flex;
 }
 
 .button {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 700;
-    color: #333333;
-    margin-right: 20px;
-    position: relative;
-    border-bottom: 2px solid transparent; 
-  }
+  @apply font-bold text-lg py-2 px-4 rounded-full mr-4 border-b-2 border-transparent cursor-pointer;
+}
 
-  .selected {
-    border-bottom: 3px solid purple;
-  }
-  
-  .color-box {
-    width: 15px;
-    height: 15px;
-    margin-left: 10px;
-    border-radius: 3px;
-    margin-right: 5px;
-  }
+.selected {
+  @apply border-b-3 border-purple-600;
+}
 
-  .node-data{
-    margin-top: 10px;
-  }
+.color-box {
+  @apply w-5 h-5 ml-2 rounded-sm mr-1;
+}
 
-  .graph{
-    max-width: 60%;
-  }
+.node-data {
+  @apply mt-4;
+}
 
-  .sidebar{
-    border-left: 2px solid gray;
-    padding: 10px;
-    padding-left: 20px;
-    max-width: 40%;
-  }
-  
+.graph {
+  @apply max-w-3xl;
+}
+
+.sidebar {
+  @apply border-l-2 pl-5 max-w-xl;
+} */
+
+.delete-icon {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.custom-node .delete-icon {
+  position: absolute;
+  top: -20px; /* Adjust as needed */
+  right: -20px; /* Adjust as needed */
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.custom-node .delete-icon:hover {
+  background-color: lightgray;
+}

@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 
+
 interface NodeDetailProps {
   selectedNode: any; // Change 'any' to the appropriate type for your selected node data
   selectedTab: string;
@@ -30,11 +31,11 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ selectedNode, selectedTab, onTa
 
   return (
     <div className="node-detail">
-      <div className="button-wrapper">
-        <button onClick={() => onTabSelect('Anomalies')} className={`button ${selectedTab === 'Anomalies' ? 'selected' : ''}`}>Anomalies</button>
-        <button onClick={() => onTabSelect('Tests')} className={`button ${selectedTab === 'Tests' ? 'selected' : ''}`}>Tests</button>
-        <button onClick={() => onTabSelect('Metrics')} className={`button ${selectedTab === 'Metrics' ? 'selected' : ''}`}>Metrics</button>
-        <button onClick={() => onTabSelect('Schema')} className={`button ${selectedTab === 'Schema' ? 'selected' : ''}`}>Schema</button>
+      <div className="flex">
+        <button onClick={() => onTabSelect('Anomalies')} className={`font-bold text-lg py-2 px-4 rounded-full mr-4 border-b-2 border-transparent cursor-pointer ${selectedTab === 'Anomalies' ? 'border-b-3 border-purple-600' : ''}`}>Anomalies</button>
+        <button onClick={() => onTabSelect('Tests')} className={`font-bold text-lg py-2 px-4 rounded-full mr-4 border-b-2 border-transparent cursor-pointer ${selectedTab === 'Tests' ? 'border-b-3 border-purple-600' : ''}`}>Tests</button>
+        <button onClick={() => onTabSelect('Metrics')} className={`font-bold text-lg py-2 px-4 rounded-full mr-4 border-b-2 border-transparent cursor-pointer ${selectedTab === 'Metrics' ? 'border-b-3 border-purple-600' : ''}`}>Metrics</button>
+        <button onClick={() => onTabSelect('Schema')} className={`font-bold text-lg py-2 px-4 rounded-full mr-4 border-b-2 border-transparent cursor-pointer ${selectedTab === 'Schema' ? 'border-b-3 border-purple-600' : ''}`}>Schema</button>
       </div>
       {selectedNode ? (
         <div className="selected-data">{content}</div>

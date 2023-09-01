@@ -12,22 +12,31 @@ import ReactFlow, {
   MarkerType,
   Position,
   useReactFlow,
+  updateEdge,
+  Connection,
+  getConnectedEdges,
+  getIncomers,
+  getOutgoers
 } from 'reactflow';
 
 import 'reactflow/dist/style.css';
-
 import './index.css';
-
 import './styles.css';
+
 import NodeDetail from './Nodedetail';
+import CustomNode from './CustomNode';
+
+const nodeTypes = {
+  customNode: CustomNode, 
+};
 
 const initialNodes: Node[] = [
-  { id: '1', position: { x: 150, y: 250 }, data: {label: ( <> <strong>toy_shop_customers</strong></> ), subLabel: ( <> <i>toy_shop_customers</i></> ) }, style: { border: '2px solid #93eb50', padding: 10 }, sourcePosition: Position.Right, targetPosition: Position.Left, },
-  { id: '2', position: { x: 150, y: 350 }, data: { label: ( <> <strong>orders</strong></> )}, style: { border: '2px solid rgb(28, 145, 69)', padding: 10 }, sourcePosition: Position.Right, targetPosition: Position.Left, },
-  { id: '3', position: { x: 150, y: 450 }, data: { label: ( <> <strong>companies</strong></> )}, style: { border: '2px solid rgb(28, 145, 69)', padding: 10 },sourcePosition: Position.Right, targetPosition: Position.Left, },
-  { id: '4', position: { x: 400, y: 250 }, data: { label: ( <> <strong>orders_per_page</strong></> ) }, style: { border: '2px solid blue', padding: 10 },sourcePosition: Position.Right, targetPosition: Position.Left, },
-  { id: '5', position: { x: 400, y: 350 }, data: { label: ( <> <strong>pending_orders</strong></> )}, style: { border: '2px solid blue', padding: 10 } ,sourcePosition: Position.Right, targetPosition: Position.Left, },
-  { id: '6', position: { x: 600, y: 250 }, data: { label: ( <> <strong>revenue_per_age</strong></> )}, style: { border: '2px solid blue', padding: 10 } ,sourcePosition: Position.Right, targetPosition: Position.Left, },
+  { id: '1', type: 'customNode', position: { x: 150, y: 250 }, data: {label: ( <> <strong>toy_shop_customers</strong></> ), subLabel: ( <> <i>toy_shop_customers</i></> ) }, style: { border: '2px solid #93eb50', padding: 8, borderRadius:'10px' }, sourcePosition: Position.Right, targetPosition: Position.Left, },
+  { id: '2', type: 'customNode', position: { x: 150, y: 350 }, data: { label: ( <> <strong>orders</strong></> ), subLabel: ( <> <i>orders</i></> ) },  style: { border: '2px solid rgb(28, 145, 69)', padding: 8, borderRadius:'10px' }, sourcePosition: Position.Right, targetPosition: Position.Left, },
+  { id: '3', type: 'customNode', position: { x: 150, y: 450 }, data: { label: ( <> <strong>companies</strong></> ), subLabel: ( <> <i>customers</i></> ) }, style: { border: '2px solid rgb(28, 145, 69)', padding: 8, borderRadius:'10px' },sourcePosition: Position.Right, targetPosition: Position.Left, },
+  { id: '4', type: 'customNode', position: { x: 400, y: 250 }, data: { label: ( <> <strong>orders_per_page</strong></> ), subLabel: ( <> <i>customers</i></> )  }, style: { border: '2px solid blue', padding: 8, borderRadius:'10px' },sourcePosition: Position.Right, targetPosition: Position.Left, },
+  { id: '5', type: 'customNode', position: { x: 400, y: 350 }, data: { label: ( <> <strong>pending_orders</strong></> ), subLabel: ( <> <i>customers</i></> ) }, style: { border: '2px solid blue', padding: 8, borderRadius:'10px' } ,sourcePosition: Position.Right, targetPosition: Position.Left, },
+  { id: '6', type: 'customNode', position: { x: 600, y: 250 }, data: { label: ( <> <strong>revenue_per_age</strong></> ), subLabel: ( <> <i>revenue</i></> ) }, style: { border: '2px solid blue', padding: 8, borderRadius:'10px' } ,sourcePosition: Position.Right, targetPosition: Position.Left, },
 ];
 
 const initialEdges: Edge[] = [
@@ -86,10 +95,14 @@ export default function App() {
   const connectingNodeId = useRef<string | null>(null);
   const { project } = useReactFlow();
 
+  const onEdgeUpdate = useCallback(
+    (oldEdge: Edge, newConnection: Connection) => setEdges((els) => updateEdge(oldEdge, newConnection, els)),
+    []
+  );
+
   const onConnectStart: OnConnectStart = useCallback((_: any, { nodeId }: any) => {
     connectingNodeId.current = nodeId;
-  }, []);
-
+  }, []); 
 
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((eds) => addEdge(connection, eds)),
@@ -101,30 +114,37 @@ export default function App() {
     const targetIsPane =
       event.target && (event.target as HTMLElement).classList.contains('react-flow__pane');
 
-    if (targetIsPane && reactFlowWrapper.current) {
-      const { top, left } = reactFlowWrapper.current.getBoundingClientRect();
-      const newId = (nodes.length + 1).toString();
-      const newNode = {
-        id: newId,
-        position: project({ x: event.clientX - left - 75, y: event.clientY - top }),
-        data: { label: `Node ${newId}` },
-      };
-
-      setNodes((nds) => nds.concat(newNode));
-
-      if (connectingNodeId.current) {
-        const newEdge = {
-          id: `${connectingNodeId.current}-${newId}`, 
-          source: connectingNodeId.current,
-          target: newId,
+      if (targetIsPane && reactFlowWrapper.current) {
+        const { top, left } = reactFlowWrapper.current.getBoundingClientRect();
+        const id = (nodes.length + 1).toString();
+        const position = project({
+          x: event.clientX - left - 75,
+          y: event.clientY - top,
+        });
+        const newNode = {
+          id,
+          type: 'customNode',
+          position,
+          data: { label: <><strong>New Node</strong></> },
+      style: { border: '2px solid black', padding: 10 } ,
+      sourcePosition: Position.Right, targetPosition: Position.Left,
         };
-        setEdges((eds) => eds.concat(newEdge));
-      }
-    }
-  },
-  [project]
-);
 
+        setNodes((prevNodes) => [...prevNodes, newNode]);
+        if (connectingNodeId.current) {
+          const newEdge = {
+            id: `${connectingNodeId.current}-${id}`,
+            source: connectingNodeId.current,
+            target: id,
+          };
+      
+          setEdges((eds) => [...eds, newEdge]);
+        }
+      
+      }
+  },
+  [project, nodes, connectingNodeId]
+);
 
   const onNodeClick = (_event: React.MouseEvent, clickedNode: Node) => {
     const updatedNodes = nodes.map((node) => {
@@ -136,16 +156,22 @@ export default function App() {
             backgroundColor: 'purple',
             color: 'white',
           },
+          isClicked: true, 
         };
       } else {
-        return {
-          ...node,
-          style: {
-            ...node.style,
-            backgroundColor: '',
-            color: '',
-          },
-        };
+        const initialNode = initialNodes.find(initialNode => initialNode.id === node.id);
+
+    if (initialNode) {
+      return {
+        ...node,
+        style: {
+          ...initialNode.style, // Reset the style to its initial values
+        },
+        isClicked: false,
+      };
+    } else {
+      return node;
+    }
       }
     });
     const updatedEdges = edges.map((edge) => {
@@ -171,6 +197,7 @@ export default function App() {
     const newNodeId = (nodes.length + 1).toString(); 
     const newNode: Node = {
       id: newNodeId,
+      type: 'customNode',
       position: { x: 0, y: 0 }, 
       data: { label: <><strong>New Node</strong></> },
       style: { border: '2px solid black', padding: 10 } ,
@@ -179,6 +206,27 @@ export default function App() {
     setNodes([...nodes, newNode]);
   };
 
+  const onNodesDelete = useCallback(
+    (deleted: any[]) => {
+      setEdges(
+        deleted.reduce((acc, node) => {
+          const incomers = getIncomers(node, nodes, edges);
+          const outgoers = getOutgoers(node, nodes, edges);
+          const connectedEdges = getConnectedEdges([node], edges);
+
+          const remainingEdges = acc.filter((edge: Edge) => !connectedEdges.includes(edge));
+
+          const createdEdges = incomers.flatMap(({ id: source }) =>
+            outgoers.map(({ id: target }) => ({ id: `${source}->${target}`, source, target }))
+          );
+
+          return [...remainingEdges, ...createdEdges];
+        }, edges)
+      );
+    },
+    [nodes, edges]
+  );
+
   const filteredNodes = selectedColor ? nodes.filter((node) => node.style?.border === `2px solid ${nodeColors[selectedColor]}`) : nodes;
   const filteredEdges = selectedColor ? edges.filter((edge) => {
     const sourceNode = nodes.find((node) => node.id === edge.source);
@@ -186,44 +234,52 @@ export default function App() {
     return sourceNode && targetNode && sourceNode.style && targetNode.style &&  sourceNode.style.border === targetNode.style.border;
   }) : edges;
   return (
-    <div style={{ display:'flex', width: '90vw', height: '100vh' }}>
-    <div className='graph' style={{ width: '100vw', height: '90vh' }}>
-      <div className="button-wrapper">
-      <button onClick={() => setSelectedColor(null)} className={`button ${selectedColor === null ? 'selected' : ''}`}>
-          <span className="color-box" style={{ backgroundColor: 'black' }}></span>
+    <div style={{ display:'flex', width: '90vw', height: '100vh' }}  ref={reactFlowWrapper}>
+    <div className='max-w-3xl' style={{ width: '100vw', height: '90vh' }}>
+      <div className="flex">
+      <button onClick={() => setSelectedColor(null)} className={`flex items-center font-bold text-lg py-2 px-4 rounded-full mr-4 border-b-2 border-transparent cursor-pointer ${selectedColor === null ? 'border-b-3 border-purple-600' : ''}`}>
+          <span className="w-5 h-5 ml-2 rounded-sm mr-1 bg-black"></span>
           All Nodes
         </button>
-        <button onClick={() => setSelectedColor('lightgreen')} className={`button ${selectedColor === 'lightgreen' ? 'selected' : ''}`}>
-          <span className="color-box" style={{ backgroundColor: 'lightgreen' }}></span>
-          Source
+        <button onClick={() => setSelectedColor('lightgreen')} className={`flex items-center font-bold text-lg py-2 px-4 rounded-full mr-4 cursor-pointer ${selectedColor === 'lightgreen' ? 'border-b-3 border-purple-600' : 'border-b-2 border-transparent'}`}>
+          <span className="w-5 h-5 rounded-sm mr-1 bg-lightgreen"></span>
+              Source
         </button>
-        <button onClick={() => setSelectedColor('darkgreen')} className={`button ${selectedColor === 'darkgreen' ? 'selected' : ''}`}>
-          <span className="color-box" style={{ backgroundColor: 'darkgreen' }}></span>
+        <button onClick={() => setSelectedColor('darkgreen')} className={`flex items-center font-bold text-lg py-2 px-4 rounded-full mr-4 border-b-2 border-transparent cursor-pointer ${selectedColor === 'darkgreen' ? 'border-b-3 border-purple-600' : ''}`}>
+          <span className="w-5 h-5 ml-2 rounded-sm mr-1 bg-darkgreen"></span>
           Seed
         </button>
-        <button onClick={() => setSelectedColor('blue')} className={`button ${selectedColor === 'blue' ? 'selected' : ''}`}>
-          <span className="color-box" style={{ backgroundColor: 'blue' }}></span>
+        <button onClick={() => setSelectedColor('blue')} className={`flex items-center font-bold text-lg py-2 px-4 rounded-full mr-4 border-b-2 border-transparent cursor-pointer ${selectedColor === 'blue' ? 'border-b-3 border-purple-600' : ''}`}>
+          <span className="w-5 h-5 ml-2 rounded-sm mr-1 bg-blue"></span>
           Model
         </button>
-        <button onClick={addNewNode} className="button">
+        <button onClick={addNewNode} className="flex items-center font-bold text-lg py-2 px-4 rounded-full mr-4 border-b-2 border-transparent cursor-pointer">
             Add New Node
           </button>
       </div>
       <ReactFlow
-         nodes={filteredNodes}
+      nodeTypes={nodeTypes}
+      nodes={filteredNodes.map((node) => ({
+        ...node,
+        data: {
+          ...node.data,
+          isClicked: node.id === selectedNode?.id, 
+        },
+      }))}
          edges={filteredEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onNodesDelete={onNodesDelete}
         onConnect={onConnect}
         onConnectStart={onConnectStart}
         onConnectEnd={onConnectEnd}
         onNodeClick={onNodeClick}
-      >
-        <Controls />
+        onEdgeUpdate={onEdgeUpdate}
+      ><Controls />
       </ReactFlow>
       
     </div>
-    <div className="sidebar">
+    <div className="border-l-2 pl-5 max-w-xl">
         <NodeDetail
           selectedNode={selectedNode}
           selectedTab={selectedTab}
@@ -233,5 +289,3 @@ export default function App() {
     </div>
   );
 }
-
-
