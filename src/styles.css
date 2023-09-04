@@ -4,36 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Your existing styles */
-
-/* .button-wrapper {
-  @apply flex;
-}
-
-.button {
-  @apply font-bold text-lg py-2 px-4 rounded-full mr-4 border-b-2 border-transparent cursor-pointer;
-}
-
-.selected {
-  @apply border-b-3 border-purple-600;
-}
-
-.color-box {
-  @apply w-5 h-5 ml-2 rounded-sm mr-1;
-}
-
-.node-data {
-  @apply mt-4;
-}
-
-.graph {
-  @apply max-w-3xl;
-}
-
-.sidebar {
-  @apply border-l-2 pl-5 max-w-xl;
-} */
-
 .delete-icon {
   position: absolute;
   top: -10px;

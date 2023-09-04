@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import { memo, useCallback } from 'react';
 import { NodeProps, Handle, Position, useReactFlow} from 'reactflow';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,8 +9,9 @@ const CustomNode = ({
 }: NodeProps) => {
   const reactFlowInstance = useReactFlow();
 
-  const onClick = useCallback(() => {
+  const onClick = useCallback((event: any) => {
     reactFlowInstance.deleteElements({ nodes: [{ id }] });
+    event.stopPropagation();
     console.log("delete");
   }, [id, reactFlowInstance]);
 

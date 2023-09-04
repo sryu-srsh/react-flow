@@ -167,7 +167,7 @@ export default function App() {
       return {
         ...node,
         style: {
-          ...initialNode.style, // Reset the style to its initial values
+          ...initialNode.style, 
         },
         isClicked: false,
       };
