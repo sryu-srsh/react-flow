@@ -26,9 +26,7 @@ import './styles.css';
 import NodeDetail from './Nodedetail';
 import CustomNode from './CustomNode';
 
-const nodeTypes = {
-  customNode: CustomNode, 
-};
+
 
 const initialNodes: Node[] = [
   { id: '1', type: 'customNode', position: { x: 150, y: 250 }, data: {label: ( <> <strong>toy_shop_customers</strong></> ), subLabel: ( <> <i>toy_shop_customers</i></> ) }, style: { border: '2px solid #93eb50', padding: 8, borderRadius:'10px' }, sourcePosition: Position.Right, targetPosition: Position.Left, },
@@ -81,6 +79,9 @@ const nodeColors:{ [key: string]: string } = {
   black: 'black',
 };
 
+const nodeTypes = {
+  customNode: CustomNode, 
+};
 
 
 export default function App() {
@@ -89,6 +90,7 @@ export default function App() {
 
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [clickedNode, setClickedNode] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<string>('Anomalies');
 
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -190,6 +192,7 @@ export default function App() {
     setNodes(updatedNodes);
     setEdges(updatedEdges);
     setSelectedNode(clickedNode);
+    setClickedNode(clickedNode.id);
     setSelectedTab('Anomalies');
   }
 
@@ -263,7 +266,7 @@ export default function App() {
         ...node,
         data: {
           ...node.data,
-          isClicked: node.id === selectedNode?.id, 
+          isClicked: node.id === clickedNode, 
         },
       }))}
          edges={filteredEdges}
